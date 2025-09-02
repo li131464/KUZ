@@ -1,6 +1,9 @@
 import sys
 import time
 import os
+import keyboard
+import threading
+from collections import deque
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
     QPushButton, QLineEdit, QTextEdit, QCheckBox, QSpinBox, QScrollArea, QDialog, QFrame, QGridLayout, QSizePolicy
@@ -192,6 +195,11 @@ class SimpleApp(QWidget):
         self.process_thread = None
         # 标记登录是否成功（用于启动阶段决定是否展示主窗口）
         self.login_ok = False
+        # 日志队列，最大5000条
+        self.log_queue = deque(maxlen=5000)
+        self.log_lock = threading.Lock()
+        # 热键监听标志
+        self.hotkey_active = False
         self.init_ui()
         # 启动后显示登录对话框，登录成功再加载任务（多用户：X-User）
         try:
@@ -491,6 +499,9 @@ class SimpleApp(QWidget):
 
         # 应用深色主题与卡片QSS
         self._apply_dark_qss()
+        
+        # 设置热键监听
+        self.setup_hotkey()
 
     def _set_global_status_text(self, text: str):
         """更新右上角系统状态文本（纯UI，不改变业务逻辑）"""
@@ -909,17 +920,27 @@ class SimpleApp(QWidget):
         return ok, input_runs.value(), input_itv.value()
     
     def log_status(self, message):
-        """添加状态信息到显示区域"""
-        self.status_text.append(message)
-        self.status_text.ensureCursorVisible()
-        QApplication.processEvents()  # 立即更新UI
-        # 更新日志计数徽标（仅展示）
-        try:
-            self.logs_count += 1
-            if hasattr(self, 'logs_count_label'):
-                self.logs_count_label.setText(f"{self.logs_count} 条记录")
-        except Exception:
-            pass
+        """添加状态信息到显示区域（限制5000条）"""
+        with self.log_lock:
+            # 添加到队列（自动维护5000条限制）
+            self.log_queue.append(message)
+            
+            # 更新UI显示
+            # 清空当前显示并重新添加所有日志
+            self.status_text.clear()
+            for log_msg in self.log_queue:
+                self.status_text.append(log_msg)
+            
+            self.status_text.ensureCursorVisible()
+            QApplication.processEvents()  # 立即更新UI
+            
+            # 更新日志计数徽标（仅展示）
+            try:
+                self.logs_count = len(self.log_queue)
+                if hasattr(self, 'logs_count_label'):
+                    self.logs_count_label.setText(f"{self.logs_count} 条记录")
+            except Exception:
+                pass
     
     def _run_process(self, task_name: str):
         """执行流程（支持循环）"""
@@ -953,6 +974,11 @@ class SimpleApp(QWidget):
         self.process_thread.log_signal.connect(self.log_status)
         self.process_thread.finished_signal.connect(self.on_process_finished)
         self.process_thread.start()
+        
+        # 启动任务后自动最小化窗口
+        self.showMinimized()
+        self.log_status("🔽 窗口已自动最小化，避免干扰操作")
+        
         # 更新页头状态
         self._set_global_status_text("运行中")
     
@@ -1012,6 +1038,73 @@ class SimpleApp(QWidget):
     def daniel_test(self):
         """daniel测试按钮对应的方法"""
         self._run_process("daniel测试")
+
+    def setup_hotkey(self):
+        """设置热键监听 Ctrl+S 终止程序"""
+        try:
+            if not self.hotkey_active:
+                def hotkey_handler():
+                    self.emergency_stop()
+                
+                # 在单独线程中设置热键监听，避免阻塞UI
+                def setup_keyboard_listener():
+                    try:
+                        keyboard.add_hotkey('ctrl+s', hotkey_handler)
+                        self.hotkey_active = True
+                        self.log_status("🔥 已注册紧急停止热键: Ctrl+S")
+                    except Exception as e:
+                        print(f"[热键] 设置失败: {e}")
+                
+                hotkey_thread = threading.Thread(target=setup_keyboard_listener, daemon=True)
+                hotkey_thread.start()
+        except Exception as e:
+            print(f"[热键] 初始化异常: {e}")
+
+    def emergency_stop(self):
+        """紧急停止所有操作"""
+        try:
+            self.log_status("🚨 检测到紧急停止热键 (Ctrl+S)！正在终止所有操作...")
+            
+            # 停止当前流程线程
+            if self.process_thread and self.process_thread.isRunning():
+                self.process_thread.stop()
+                self.process_thread.wait(3000)  # 等待最多3秒
+                if self.process_thread.isRunning():
+                    self.process_thread.terminate()  # 强制终止
+                self.log_status("🛑 流程线程已强制终止")
+            
+            # 恢复按钮状态
+            self.set_buttons_enabled(True)
+            self.stop_button.setEnabled(False)
+            
+            # 恢复窗口显示
+            if self.isMinimized():
+                self.showNormal()
+                self.activateWindow()
+                self.raise_()
+            
+            # 更新状态
+            self._set_global_status_text("紧急停止")
+            self.log_status("✅ 紧急停止完成，窗口已恢复显示")
+            
+        except Exception as e:
+            self.log_status(f"❌ 紧急停止过程中发生异常: {str(e)}")
+
+    def closeEvent(self, event):
+        """窗口关闭事件，清理热键监听"""
+        try:
+            if self.hotkey_active:
+                keyboard.unhook_all()
+                self.hotkey_active = False
+        except Exception:
+            pass
+        
+        # 停止所有线程
+        if self.process_thread and self.process_thread.isRunning():
+            self.process_thread.stop()
+            self.process_thread.wait(1000)
+        
+        event.accept()
 
 
 def main():
