@@ -18,30 +18,43 @@ from .keyboard_operations import execute_keyboard
 from .scroll_operations import execute_scroll
 from .check_complete_operations import execute_check_complete
 
+# 全局变量存储当前任务的日志文件路径
+_current_task_log_file = None
+_current_task_start_time = None
+
 def save_step_results(step_results, task_name, status="in_progress"):
     """
     保存step_results到本地文件，方便调试
+    使用同一个文件进行增量更新，避免产生多个冗余文件
     
     Args:
         step_results: 步骤结果字典
         task_name: 任务名称
         status: 执行状态
     """
+    global _current_task_log_file, _current_task_start_time
+    
     try:
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"step_results_{task_name}_{timestamp}_{status}.json"
-        
         # 确保目录存在
         debug_dir = "debug_logs"
         if not os.path.exists(debug_dir):
             os.makedirs(debug_dir)
         
-        filepath = os.path.join(debug_dir, filename)
+        # 如果是新任务或者文件不存在，创建新的日志文件
+        if (_current_task_log_file is None or 
+            not os.path.exists(_current_task_log_file) or
+            status.startswith("step_1_")):
+            
+            _current_task_start_time = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"step_results_{task_name}_{_current_task_start_time}.json"
+            _current_task_log_file = os.path.join(debug_dir, filename)
+            print(f"📋 创建新的日志文件: {_current_task_log_file}")
         
         # 准备保存的数据
         debug_data = {
             "task_name": task_name,
-            "timestamp": timestamp,
+            "start_timestamp": _current_task_start_time,
+            "last_update": datetime.now().strftime("%Y%m%d_%H%M%S"),
             "status": status,
             "total_steps": len(step_results),
             "step_results": {}
@@ -56,11 +69,19 @@ def save_step_results(step_results, task_name, status="in_progress"):
                 "result_data": result
             }
         
-        with open(filepath, 'w', encoding='utf-8') as f:
+        # 写入文件（覆盖更新）
+        with open(_current_task_log_file, 'w', encoding='utf-8') as f:
             json.dump(debug_data, f, ensure_ascii=False, indent=2)
         
-        print(f"📋 Step results saved to: {filepath}")
-        return filepath
+        print(f"📋 Step results updated: {_current_task_log_file} (状态: {status})")
+        
+        # 如果任务完成或失败，清空全局变量
+        if status in ["completed", "failed"] or "failed" in status:
+            _current_task_log_file = None
+            _current_task_start_time = None
+            print(f"📋 任务日志记录完成，文件路径已清空")
+        
+        return _current_task_log_file
         
     except Exception as e:
         print(f"❌ Failed to save step results: {e}")
