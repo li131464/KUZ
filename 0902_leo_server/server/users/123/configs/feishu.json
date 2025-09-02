@@ -1,0 +1,105 @@
+{
+    "credentials": {
+        "app_id": "cli_a7f2a82b4ef41013",
+        "app_secret": "Lr4KLyrpVvOJYEFj7L0KkdxIgbsB76IC",
+        "app_token": "HpTobHZqtaPib9sZWlEcH5FFnDe",
+        "table_id": "tblHCLKViWRWRxjA",
+        "auth_url": "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal"
+    },
+    "feishu_table_db": {
+        "抖音创作者信息1": {
+            "app_token": "HpTobHZqtaPib9sZWlEcH5FFnDe",
+            "table_id": "tblHCLKViWRWRxjA",
+            "description": "抖音创作者视频信息（多维表格）",
+            "fields_mapping": {
+                "视频名称": {"field_name": "视频名称", "type": "string"},
+                "发布时间": {"field_name": "发布时间", "type": "date", "date_format": "yyyy/MM/dd HH:mm"},
+                "播放量": {"field_name": "播放量", "type": "int"},
+                "点赞数": {"field_name": "点赞数", "type": "int"},
+                "评论数": {"field_name": "评论数", "type": "int"},
+                "分享数": {"field_name": "分享数", "type": "int"},
+                "video_id": {"field_name": "video_id", "type": "string"}
+            },
+            "hash_fields": ["视频名称", "发布时间"],
+            "primary_key_field": "video_id",
+            "is_array_data": true
+        },
+        "抖音视频维度表格": {
+            "app_token": "HpTobHZqtaPib9sZWlEcH5FFnDe",
+            "table_id": "tblMI8KQCjrD6ea9",
+            "description": "抖音视频维度表格",
+            "fields_mapping": {
+                "视频名称": {"field_name": "视频名称", "type": "string"},
+                "发布时间": {"field_name": "发布时间", "type": "date", "date_format": "yyyy/MM/dd HH:mm"},
+                "账号名称": {"field_name": "账号名称", "type": "string"},
+                "播放量": {"field_name": "播放量", "type": "int"},
+                "完播率": {"field_name": "完播率", "type": "percent"},
+                "5s完播率": {"field_name": "5s完播率", "type": "percent"},
+                "封面点击率": {"field_name": "封面点击率", "type": "percent"},
+                "2s跳出率": {"field_name": "2s跳出率", "type": "percent"},
+                "平均播放时长": {"field_name": "平均播放时长", "type": "string"},
+                "点赞量": {"field_name": "点赞量", "type": "int"},
+                "分享量": {"field_name": "分享量", "type": "int"},
+                "评论量": {"field_name": "评论量", "type": "int"},
+                "收藏量": {"field_name": "收藏量", "type": "int"},
+                "主页访问量": {"field_name": "主页访问量", "type": "int"},
+                "粉丝增量": {"field_name": "粉丝增量", "type": "int"},
+                "video_id": {"field_name": "video_id", "type": "string"}
+            },
+            "hash_fields": ["视频名称", "发布时间"],
+            "primary_key_field": "video_id",
+            "is_array_data": true
+        },
+        "抖音账号维度信息": {
+            "app_token": "HpTobHZqtaPib9sZWlEcH5FFnDe",
+            "table_id": "tblacPkZHjo1l3mE",
+            "description": "抖音账号维度信息",
+            "fields_mapping": {
+                "账号名称": {"field_name": "账号名称", "type": "string"},
+                "未读私信": {"field_name": "未读私信", "type": "int"},
+                "播放量": {"field_name": "播放量", "type": "int"},
+                "主页访问": {"field_name": "主页访问", "type": "int"},
+                "作品点赞": {"field_name": "作品点赞", "type": "int"},
+                "作品分享": {"field_name": "作品分享", "type": "int"},
+                "作品评论": {"field_name": "作品评论", "type": "int"},
+                "封面点击率": {"field_name": "封面点击率", "type": "percent"},
+                "净增粉丝": {"field_name": "净增粉丝", "type": "int"},
+                "取关粉丝": {"field_name": "取关粉丝", "type": "int"},
+                "总粉丝量": {"field_name": "总粉丝量", "type": "int"},
+                "男生比例": {"field_name": "男生比例", "type": "percent"},
+                "女生比例": {"field_name": "女生比例", "type": "percent"},
+                "第一名地区": {"field_name": "第一名地区", "type": "string"},
+                "第一名占比": {"field_name": "第一名占比", "type": "percent"},
+                "第二名地区": {"field_name": "第二名地区", "type": "string"},
+                "第二名占比": {"field_name": "第二名占比", "type": "percent"},
+                "第三名地区": {"field_name": "第三名地区", "type": "string"},
+                "第三名占比": {"field_name": "第三名占比", "type": "percent"},
+                "第四名地区": {"field_name": "第四名地区", "type": "string"},
+                "第四名占比": {"field_name": "第四名占比", "type": "percent"},
+                "第五名地区": {"field_name": "第五名地区", "type": "string"},
+                "第五名占比": {"field_name": "第五名占比", "type": "percent"},
+                "account_id": {"field_name": "account_id", "type": "string"},
+                "日期": {"field_name": "日期", "type": "date", "date_format": "yyyy/MM/dd HH:mm", "default_now_tw": true}
+                },
+            "hash_fields": ["账号名称", "日期"],
+            "primary_key_field": "account_id",
+            "is_array_data": true
+        },
+        "默认表格": {
+            "app_token": "HpTobHZqtaPib9sZWlEcH5FFnDe",
+            "table_id": "tblHCLKViWRWRxjA",
+            "description": "默认表格配置",
+            "fields_mapping": {
+                "用户名称": "用户名称",
+                "粉丝数": "粉丝数"
+            }
+        }
+    },
+    "feishu_doc_db": {
+        "视频数据分析": {
+            "doc_token": "XuzldxZFaoqpHQxhfNZcEotGnWe",
+            "doc_url": "https://koolingmonster.feishu.cn/docx/XuzldxZFaoqpHQxhfNZcEotGnWe",
+            "description": "视频数据分析报告文档"
+        }
+    }
+}

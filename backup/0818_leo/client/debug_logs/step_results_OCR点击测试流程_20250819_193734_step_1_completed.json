@@ -1,0 +1,27 @@
+{
+  "task_name": "OCR点击测试流程",
+  "timestamp": "20250819_193734",
+  "status": "step_1_completed",
+  "total_steps": 1,
+  "step_results": {
+    "1": {
+      "step_id": 1,
+      "result_type": "dict",
+      "result_keys": [
+        "target_text",
+        "coordinates",
+        "confidence",
+        "message"
+      ],
+      "result_data": {
+        "target_text": "确定",
+        "coordinates": [
+          507,
+          409
+        ],
+        "confidence": 1.0,
+        "message": "找到文字'确定' (相似度: 1.000, OCR置信度: 1.000)"
+      }
+    }
+  }
+}

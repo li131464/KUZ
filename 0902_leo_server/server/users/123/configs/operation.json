@@ -1,0 +1,134 @@
+{
+    "coordinate_db": {
+        "确定按钮": [960, 540],
+        "取消按钮": [860, 540],
+        "红色按钮": [800, 400],
+        "关闭按钮": [1200, 100],
+        "开始按钮": [500, 300],
+        "windows开始按钮": [678, 1411],
+        "输入框": [136, 246],
+        "浏览器搜索框": [327, 105],
+        "测试点击": [332, 165],
+        "点击浏览器准备复制": [1406, 177],
+        "点击投稿列表按钮":[743, 457],
+        "daniel_test":[800, 600]
+    },
+    "scroll_db": {
+        "向下滚动3次": {
+            "clicks": 3,
+            "direction": "down",
+            "scroll_distance": 3
+        },
+        "向上滚动5次": {
+            "clicks": 5,
+            "direction": "up",
+            "scroll_distance": 3
+        },
+        "向下滚动到底": {
+            "clicks": 10,
+            "direction": "down",
+            "scroll_distance": 5
+        },
+        "向左滚动": {
+            "clicks": 3,
+            "direction": "left",
+            "scroll_distance": 3
+        },
+        "向右滚动": {
+            "clicks": 3,
+            "direction": "right",
+            "scroll_distance": 3
+        },
+        "快速向下滚动": {
+            "clicks": 8,
+            "direction": "down",
+            "scroll_distance": 5
+        },
+        "加载页面内容": {
+            "clicks": 5,
+            "direction": "down",
+            "scroll_distance": 4,
+            "description": "滚动加载页面完整内容"
+        },
+        "深度滚动加载": {
+            "clicks": 8,
+            "direction": "down",
+            "scroll_distance": 6,
+            "description": "深度滚动确保所有内容加载"
+        }
+    },
+    "keyboard_operations_db": {
+        "全选并复制": {
+            "operation_name": "全选并复制",
+            "description": "选择全部内容并复制到剪贴板",
+            "operations": ["command+a", "wait:200", "command+c"],
+            "has_clipboard_result": true,
+            "platform_variants": {
+                "darwin": ["command+a", "wait:200", "command+c"],
+                "win32": ["ctrl+a", "wait:200", "ctrl+c"],
+                "linux": ["ctrl+a", "wait:200", "ctrl+c"]
+            }
+        },
+        "切换页面": {
+            "operation_name": "切换页面",
+            "description": "切换到下一个浏览器",
+            "operations": ["="],
+            "has_clipboard_result": false,
+            "platform_variants": {
+                "darwin": ["="],
+                "win32": ["="],
+                "linux": ["="]
+            }
+        },
+        "粘贴": {
+            "operation_name": "粘贴",
+            "description": "从剪贴板粘贴内容",
+            "operations": ["command+v"],
+            "has_clipboard_result": false,
+            "platform_variants": {
+                "darwin": ["command+v"],
+                "win32": ["ctrl+v"],
+                "linux": ["ctrl+v"]
+            }
+        },
+        "撤销": {
+            "operation_name": "撤销",
+            "description": "撤销上一步操作",
+            "operations": ["command+z"],
+            "has_clipboard_result": false,
+            "platform_variants": {
+                "darwin": ["command+z"],
+                "win32": ["ctrl+z"],
+                "linux": ["ctrl+z"]
+            }
+        },
+        "保存": {
+            "operation_name": "保存",
+            "description": "保存当前文档",
+            "operations": ["command+s"],
+            "has_clipboard_result": false,
+            "platform_variants": {
+                "darwin": ["command+s"],
+                "win32": ["ctrl+s"],
+                "linux": ["ctrl+s"]
+            }
+        }
+    },
+    "drag_db": {
+        "抖音用户信息区域": [330, 220, 628, 255],
+        "拖拽固定区域": {
+            "start": [253, 242],
+            "end": [362, 242]
+        },
+        "标题选择区域": {
+            "start": [120, 180],
+            "end": [620, 230]
+        }
+    },
+    "rec_db": {
+        "流程控制": [461, 580, 594, 620],
+        "抖音用户信息区域": [319, 193, 646, 279],
+        "默认识别区域": [100, 100, 200, 150],
+        "男粉女粉区域":[634, 587, 1402, 1223]
+    }
+}

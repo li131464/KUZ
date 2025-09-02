@@ -1,0 +1,55 @@
+nohup: ignoring input
+INFO:     Will watch for changes in these directories: ['/home/ubuntu/kuzflow/project/server/backend/man/0818_leo']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [3794933] using StatReload
+INFO:     Started server process [3794935]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+接收到OCR点击请求: 目标文字='test', 截图长度=96, 相似度阈值=0.3
+OCR点击处理完成，耗时: 1.408秒
+INFO:     121.4.65.242:0 - "POST /api/ocr/click HTTP/1.0" 200 OK
+WARNING:  StatReload detected changes in 'server/functions/ocr_click_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [3794935]
+INFO:     Started server process [3795890]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+接收到OCR点击请求: 目标文字='test', 截图长度=96, 相似度阈值=0.3
+OCR点击处理完成，耗时: 1.465秒
+INFO:     121.4.65.242:0 - "POST /api/ocr/click HTTP/1.0" 200 OK
+WARNING:  StatReload detected changes in 'server/functions/ocr_click_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [3795890]
+INFO:     Started server process [3796317]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+Warning with import paddle: you should not
+     import paddle from the source directory; please install paddlepaddle*.whl firstly.Error: Can not import paddle core while this file exists: /home/ubuntu/kuzflow/venv/miniconda3/lib/python3.13/site-packages/paddle/base/libpaddle.so
+接收到OCR点击请求: 目标文字='test', 截图长度=96, 相似度阈值=0.3
+OCR点击处理完成，耗时: 1.435秒
+INFO:     121.4.65.242:0 - "POST /api/ocr/click HTTP/1.0" 200 OK
+WARNING:  StatReload detected changes in 'server/start.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [3796317]
+INFO:     Started server process [3798540]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'server/functions/ocr_click_service.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [3798540]
+INFO:     Started server process [3869280]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [3869280]
+INFO:     Stopping reloader process [3794933]

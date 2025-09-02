@@ -1,0 +1,296 @@
+{
+    "process_db": {
+        "截图识别": {
+            "task_name": "截图识别",
+            "description": "识别界面文字并自动输入到指定位置",
+            "steps": [
+                {
+                    "step_id": 1,
+                    "step_type": "rec_get_xy",
+                    "step_name": "获取截图区域",
+                    "params": {
+                        "target_description": "流程控制"
+                    }
+                },
+                {
+                    "step_id": 2,
+                    "step_type": "rec_rec",
+                    "step_name": "图像识别",
+                    "params": {
+                        "target_description": "流程控制"
+                    }
+                }
+            ]
+        },
+        "简单点击流程": {
+            "task_name": "简单点击流程",
+            "description": "获取坐标并点击",
+            "steps": [
+                {
+                    "step_id": 1,
+                    "step_type": "click",
+                    "step_name": "点击按钮",
+                    "params": {
+                        "target_description": "确定按钮"
+                    }
+                }
+            ]
+        },
+        "抖音用户信息获取流程": {
+            "task_name": "抖音用户信息获取流程",
+            "description": "获取抖音用户页面信息并保存到本地文件",
+            "steps": [
+                {
+                    "step_id": 1,
+                    "step_type": "click",
+                    "step_name": "点击浏览器搜索框",
+                    "params": {
+                        "target_description": "浏览器搜索框"
+                    }
+                },
+                {
+                    "step_id": 2,
+                    "step_type": "input",
+                    "step_name": "输入链接并回车",
+                    "params": {
+                        "text": "www.baidu.com",
+                        "press_enter": true
+                    }
+                },
+                {
+                    "step_id": 3,
+                    "step_type": "wait",
+                    "step_name": "等待页面加载",
+                    "params": {
+                        "wait_time": 3.0,
+                        "reason": "等待抖音页面加载完成"
+                    }
+                },
+                {
+                    "step_id": 4,
+                    "step_type": "rec_get_xy",
+                    "step_name": "获取用户信息截图区域",
+                    "params": {
+                        "target_description": "抖音用户信息区域"
+                    }
+                },
+                {
+                    "step_id": 5,
+                    "step_type": "rec_rec",
+                    "step_name": "识别用户信息",
+                    "params": {
+                        "target_description": "抖音用户信息区域"
+                    }
+                },
+                {
+                    "step_id": 6,
+                    "step_type": "llm_process",
+                    "step_name": "LLM处理用户信息",
+                    "params": {
+                        "use_previous_result": true,
+                        "source_step": 5
+                    }
+                },
+                {
+                    "step_id": 7,
+                    "step_type": "save_result",
+                    "step_name": "保存结果到文件",
+                    "params": {
+                        "filename": "result.txt",
+                        "use_previous_result": true,
+                        "source_step": 6
+                    }
+                },
+                {
+                    "step_id": 8,
+                    "step_type": "feishu_write",
+                    "step_name": "写入飞书多维表格",
+                    "params": {
+                        "use_previous_result": true,
+                        "source_step": 6,
+                        "source": "抖音用户信息获取流程"
+                    }
+                }
+            ]
+        },
+        "拖拽识别流程": {
+            "task_name": "拖拽识别流程",
+            "description": "通过拖拽选择复制文本并进行LLM处理，最终保存结果",
+            "steps": [
+                {
+                    "step_id": 1,
+                    "step_type": "click",
+                    "step_name": "点击浏览器搜索框",
+                    "params": {
+                        "target_description": "浏览器搜索框"
+                    }
+                },
+                {
+                    "step_id": 2,
+                    "step_type": "input",
+                    "step_name": "输入链接并回车",
+                    "params": {
+                        "text": "https://www.douyin.com/user/MS4wLjABAAAAh7MdVA-UbMYLeO3_zhA_Z-Mrkh8cDwBCU_qQqucnrFE",
+                        "press_enter": true
+                    }
+                },
+                {
+                    "step_id": 3,
+                    "step_type": "wait",
+                    "step_name": "等待页面加载",
+                    "params": {
+                        "wait_time": 3.0,
+                        "reason": "等待抖音页面加载完成"
+                    }
+                },
+                {
+                    "step_id": 4,
+                    "step_type": "drag",
+                    "step_name": "拖拽选择并复制用户信息",
+                    "params": {
+                        "target_description": "抖音用户信息区域"
+                    }
+                },
+                {
+                    "step_id": 5,
+                    "step_type": "llm_process",
+                    "step_name": "LLM处理用户信息",
+                    "params": {
+                        "use_previous_result": true,
+                        "source_step": 4
+                    }
+                },
+                {
+                    "step_id": 6,
+                    "step_type": "save_result",
+                    "step_name": "保存结果到文件",
+                    "params": {
+                        "filename": "result.txt",
+                        "use_previous_result": true,
+                        "source_step": 5
+                    }
+                },
+                {
+                    "step_id": 7,
+                    "step_type": "feishu_write",
+                    "step_name": "写入飞书多维表格",
+                    "params": {
+                        "use_previous_result": true,
+                        "source_step": 5,
+                        "source": "拖拽识别流程"
+                    }
+                }
+            ]
+        },
+        "抖音信息复制流程": {
+            "task_name": "抖音信息复制流程",
+            "description": "自动化复制抖音两个页面的信息并写入飞书表格",
+            "steps": [
+                {
+                    "step_id": 1,
+                    "step_type": "click",
+                    "step_name": "点击浏览器搜索框",
+                    "params": {
+                        "target_description": "浏览器搜索框"
+                    }
+                },
+                {
+                    "step_id": 2,
+                    "step_type": "input",
+                    "step_name": "输入链接并回车",
+                    "params": {
+                        "text": "https://creator.douyin.com/creator-micro/content/manage",
+                        "press_enter": true
+                    }
+                },
+                {
+                    "step_id": 3,
+                    "step_type": "wait",
+                    "step_name": "等待页面加载",
+                    "params": {
+                        "wait_time": 3
+                    }
+                },
+                {
+                    "step_id": 4,
+                    "step_type": "click",
+                    "step_name": "点击浏览器准备复制",
+                    "params": {
+                        "target_description": "点击浏览器准备复制"
+                    }
+                },
+                {
+                    "step_id": 5,
+                    "step_type": "keyboard",
+                    "step_name": "全选并复制第一页面内容",
+                    "params": {
+                        "operation_name": "全选并复制",
+                        "operations": ["command+a", "wait:200", "command+c"]
+                    }
+                },
+                {
+                    "step_id": 6,
+                    "step_type": "llm_process",
+                    "step_name": "LLM处理第一页面信息",
+                    "params": {
+                        "prompt_name": "处理创作者信息",
+                        "use_previous_result": true,
+                        "source_step": 5
+                    }
+                },
+                {
+                    "step_id": 7,
+                    "step_type": "feishu_write",
+                    "step_name": "写入飞书多维表格1",
+                    "params": {
+                        "table_name": "抖音创作者信息1",
+                        "use_previous_result": true,
+                        "source_step": 6,
+                        "source": "抖音信息复制流程"
+                    }
+                },
+                {
+                    "step_id": 8,
+                    "step_type": "drag",
+                    "step_name": "拖拽固定区域",
+                    "params": {
+                        "target_description": "拖拽固定区域"
+                    }
+                }
+                
+            ]
+        },
+        "OCR点击测试流程": {
+            "task_name": "OCR点击测试流程",
+            "description": "使用OCR识别文字并依次点击确定和下一步",
+            "steps": [
+                {
+                    "step_id": 1,
+                    "step_type": "ocr_click",
+                    "step_name": "OCR识别并点击确定",
+                    "params": {
+                        "target_text": "确定",
+                        "min_similarity_threshold": 0.3
+                    }
+                },
+                {
+                    "step_id": 2,
+                    "step_type": "wait",
+                    "step_name": "等待1秒",
+                    "params": {
+                        "wait_time": 1.0
+                    }
+                },
+                {
+                    "step_id": 3,
+                    "step_type": "ocr_click",
+                    "step_name": "OCR识别并点击下一步",
+                    "params": {
+                        "target_text": "下一步",
+                        "min_similarity_threshold": 0.3
+                    }
+                }
+            ]
+        }
+    }
+}

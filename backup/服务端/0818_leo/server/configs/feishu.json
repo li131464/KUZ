@@ -1,0 +1,34 @@
+{
+    "credentials": {
+        "app_id": "cli_a7f2a82b4ef41013",
+        "app_secret": "Lr4KLyrpVvOJYEFj7L0KkdxIgbsB76IC",
+        "app_token": "HpTobHZqtaPib9sZWlEcH5FFnDe",
+        "table_id": "tblHCLKViWRWRxjA",
+        "auth_url": "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal"
+    },
+    "feishu_table_db": {
+        "抖音创作者信息1": {
+            "app_token": "HpTobHZqtaPib9sZWlEcH5FFnDe",
+            "table_id": "tblHCLKViWRWRxjA",
+            "description": "抖音创作者视频信息（多维表格）",
+            "fields_mapping": {
+                "视频名称": "视频名称",
+                "发布时间": "发布时间",
+                "播放量": "播放量",
+                "点赞数": "点赞数",
+                "评论数": "评论数",
+                "分享数": "分享数"
+            },
+            "is_array_data": true
+        },
+        "默认表格": {
+            "app_token": "HpTobHZqtaPib9sZWlEcH5FFnDe",
+            "table_id": "tblHCLKViWRWRxjA",
+            "description": "默认表格配置",
+            "fields_mapping": {
+                "用户名称": "用户名称",
+                "粉丝数": "粉丝数"
+            }
+        }
+    }
+}
