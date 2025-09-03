@@ -1,0 +1,25 @@
+{
+  "version": "1.1.0",
+  "package": {
+    "filename": "update_v1.1.0.zip",
+    "size": 18697,
+    "hash": "dc7c66a41308cb3e2a186ef9e7ade211f4bf3331fa4c6584e93cd30a5abf0cd9",
+    "download_url": "/api/version/download/1.1.0"
+  },
+  "metadata": {
+    "release_date": "2024-09-03T10:00:00Z",
+    "platform": "windows",
+    "arch": "x64"
+  },
+  "files": [
+    "app.py",
+    "version.txt",
+    "manipulate/__init__.py",
+    "manipulate/api_client.py",
+    "manipulate/update_manager.py",
+    "manipulate/download_manager.py",
+    "manipulate/installer.py",
+    "manipulate/update_dialog.py",
+    "config/update_config.json"
+  ]
+}

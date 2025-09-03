@@ -1,0 +1,22 @@
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8000
+  },
+  "versions": {
+    "latest": "1.1.0",
+    "supported": ["1.0.0", "1.1.0"],
+    "force_update_from": "0.9.0"
+  },
+  "releases_path": "./releases",
+  "security": {
+    "enable_signature_verification": false,
+    "max_download_size": 104857600,
+    "allowed_platforms": ["windows", "macos", "linux"]
+  },
+  "logging": {
+    "level": "INFO",
+    "log_downloads": true,
+    "log_file": "server.log"
+  }
+}

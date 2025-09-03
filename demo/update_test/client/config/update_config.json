@@ -1,0 +1,30 @@
+{
+  "update_server": {
+    "base_url": "http://127.0.0.1:8000",
+    "api_version": "v1",
+    "timeout": 30
+  },
+  "check_settings": {
+    "auto_check": true,
+    "check_interval": 86400,
+    "check_on_startup": true,
+    "beta_updates": false
+  },
+  "download_settings": {
+    "parallel_downloads": 3,
+    "chunk_size": 8192,
+    "retry_count": 3,
+    "verify_ssl": false
+  },
+  "install_settings": {
+    "backup_enabled": true,
+    "backup_count": 3,
+    "auto_restart": true,
+    "rollback_on_failure": true
+  },
+  "ui_settings": {
+    "show_progress": true,
+    "minimize_on_update": false,
+    "auto_close_after_update": true
+  }
+}
