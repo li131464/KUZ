@@ -1,6 +1,6 @@
 """
-在线更新测试项目 - 服务端
-基于 FastAPI 实现的更新服务器
+在线更新测试项目 - 服务端 (PyInstaller版本)
+基于 FastAPI 实现的更新服务器，支持exe文件的在线更新
 模仿 0902_leo_server 的架构设计
 """
 
@@ -138,12 +138,13 @@ async def check_version(
             "latest_version": latest_version,
             "update_type": update_type,
             "force_update": force_update,
-            "download_url": f"/api/version/download/{latest_version}",
+            "download_url": f"/api/version/download_exe/{latest_version}",  # 下载exe文件
             "file_size": package_info["size"],
             "file_hash": package_info["hash"],
             "changelog": f"/api/version/changelog/{latest_version}",
             "release_date": package_info.get("release_date", "2024-09-03T10:00:00Z"),
-            "message": f"发现新版本 {latest_version}"
+            "message": f"发现新版本 {latest_version}",
+            "update_mode": "pyinstaller_exe"  # 标识这是exe更新模式
         }
         
     except Exception as e:
@@ -231,6 +232,88 @@ async def download_version(
     except Exception as e:
         print(f"[错误] 下载失败: {str(e)}")
         raise HTTPException(status_code=500, detail=f"下载失败: {str(e)}")
+
+@app.get("/api/version/download_exe/{version}")
+async def download_exe_version(
+    version: str,
+    range_header: str = Header(None, alias="range")
+):
+    """下载exe文件版本（PyInstaller专用，支持断点续传）"""
+    try:
+        print(f"[exe下载] 版本: {version}")
+        
+        if version not in CONFIG["versions"]["supported"]:
+            raise HTTPException(status_code=404, detail=f"不支持的版本: {version}")
+        
+        # exe文件路径 - 假设exe文件存储在releases目录
+        exe_filename = f"KuzflowApp_v{version}.exe"
+        exe_path = current_dir / "releases" / f"v{version}" / exe_filename
+        
+        # 兼容旧的zip包结构（从zip包中提取exe）
+        if not exe_path.exists():
+            # 尝试从zip包中查找exe文件
+            zip_path = current_dir / "releases" / f"v{version}" / f"update_v{version}.zip"
+            if zip_path.exists():
+                # 这里可以实现从zip中提取exe的逻辑
+                # 为了演示，我们直接返回错误
+                raise HTTPException(status_code=404, detail=f"exe文件不存在，只有zip包: {zip_path}")
+        
+        if not exe_path.exists():
+            raise HTTPException(status_code=404, detail=f"exe文件不存在: {exe_path}")
+        
+        file_size = os.path.getsize(exe_path)
+        print(f"[exe下载] 文件: {exe_path}, 大小: {file_size}")
+        
+        # 处理 Range 请求（断点续传）
+        if range_header:
+            range_match = re.match(r'bytes=(\d+)-(\d*)', range_header)
+            if range_match:
+                start = int(range_match.group(1))
+                end = int(range_match.group(2)) if range_match.group(2) else file_size - 1
+                
+                print(f"[断点续传] exe下载范围: {start}-{end}/{file_size}")
+                
+                def generate_chunk():
+                    with open(exe_path, 'rb') as f:
+                        f.seek(start)
+                        remaining = end - start + 1
+                        while remaining > 0:
+                            chunk_size = min(8192, remaining)
+                            chunk = f.read(chunk_size)
+                            if not chunk:
+                                break
+                            remaining -= len(chunk)
+                            yield chunk
+                
+                return StreamingResponse(
+                    generate_chunk(),
+                    status_code=206,
+                    headers={
+                        'Content-Range': f'bytes {start}-{end}/{file_size}',
+                        'Accept-Ranges': 'bytes',
+                        'Content-Length': str(end - start + 1),
+                        'Content-Type': 'application/octet-stream',
+                        'Content-Disposition': f'attachment; filename="{exe_filename}"'
+                    }
+                )
+        
+        # 完整文件下载
+        print(f"[完整exe下载] 文件: {exe_path}, 大小: {file_size}")
+        return FileResponse(
+            exe_path,
+            media_type='application/octet-stream',
+            filename=exe_filename,
+            headers={
+                'Accept-Ranges': 'bytes',
+                'Content-Length': str(file_size)
+            }
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"[错误] exe下载失败: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"exe下载失败: {str(e)}")
 
 @app.get("/api/version/changelog/{version}")
 async def get_changelog(version: str):

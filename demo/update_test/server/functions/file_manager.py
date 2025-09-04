@@ -43,10 +43,36 @@ class FileManager:
         version_dir = self.releases_path / f"v{version}"
         return str(version_dir / package_name)
     
+    def get_exe_path(self, version: str, platform: str = "windows", arch: str = "x64") -> str:
+        """获取exe文件的完整路径"""
+        exe_name = f"KuzflowApp_v{version}.exe"
+        version_dir = self.releases_path / f"v{version}"
+        return str(version_dir / exe_name)
+    
     def get_package_info(self, version: str, platform: str = "windows", arch: str = "x64") -> Optional[Dict[str, Any]]:
-        """获取更新包信息"""
-        package_path = self.get_package_path(version, platform, arch)
+        """获取更新包信息（优先返回exe文件信息）"""
+        # 优先查找exe文件
+        exe_path = self.get_exe_path(version, platform, arch)
+        if os.path.exists(exe_path):
+            try:
+                file_size = os.path.getsize(exe_path)
+                file_hash = self.calculate_file_hash(exe_path)
+                
+                return {
+                    "path": exe_path,
+                    "size": file_size,
+                    "hash": file_hash,
+                    "platform": platform,
+                    "arch": arch,
+                    "version": version,
+                    "release_date": "2024-09-03T10:00:00Z",
+                    "file_type": "exe"
+                }
+            except Exception as e:
+                print(f"获取exe文件信息失败: {e}")
         
+        # 回退到zip包
+        package_path = self.get_package_path(version, platform, arch)
         if not os.path.exists(package_path):
             print(f"更新包不存在: {package_path}")
             return None
@@ -62,7 +88,8 @@ class FileManager:
                 "platform": platform,
                 "arch": arch,
                 "version": version,
-                "release_date": "2024-09-03T10:00:00Z"
+                "release_date": "2024-09-03T10:00:00Z",
+                "file_type": "zip"
             }
         except Exception as e:
             print(f"获取包信息失败: {e}")

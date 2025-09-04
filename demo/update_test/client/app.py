@@ -1,12 +1,13 @@
 """
-在线更新测试项目 - 客户端主应用
-基于 PyQt5 实现，模仿 0902_leo_client/app.py 的架构设计
+在线更新测试项目 - 客户端主应用 (PyInstaller版本)
+基于 PyQt5 实现，支持exe文件的在线更新
 """
 
 import sys
 import os
 import time
 import json
+import subprocess
 from pathlib import Path
 
 # PyQt5 imports - 与您的项目保持一致
@@ -369,19 +370,40 @@ class SimpleTestApp(QWidget):
         self.update_check_thread.start()
     
     def on_update_found(self, update_info):
-        """发现更新"""
+        """发现更新 - PyInstaller模式"""
         self.log_message(f"⚠️ 发现强制更新: {update_info['latest_version']}")
         
-        # 显示强制更新对话框
-        from manipulate.update_dialog import UpdateDialog
-        dialog = UpdateDialog(update_info, self)
+        # PyInstaller模式：显示更新确认对话框
+        reply = QMessageBox.question(
+            self,
+            "发现新版本",
+            f"""发现新版本 v{update_info['latest_version']}
+            
+当前版本: v{self.current_version}
+文件大小: {self.format_file_size(update_info.get('file_size', 0))}
+
+是否立即更新？
+注意：更新过程中程序将会关闭并重启。""",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.Yes
+        )
         
-        # 强制更新模式：用户只能选择更新或退出应用
-        # 如果对话框返回Accepted，说明用户选择了更新
-        # 如果用户选择退出，对话框内部会直接调用sys.exit(0)
-        if dialog.exec_() == QDialog.Accepted:
-            self.log_message("👍 用户确认强制更新，开始下载...")
-            self.start_update(update_info)
+        if reply == QMessageBox.Yes:
+            self.log_message("👍 用户确认更新，启动更新器...")
+            self.start_pyinstaller_update(update_info)
+        else:
+            self.log_message("用户选择稍后更新")
+    
+    def format_file_size(self, size_bytes):
+        """格式化文件大小显示"""
+        if size_bytes == 0:
+            return "未知大小"
+        
+        for unit in ['B', 'KB', 'MB', 'GB']:
+            if size_bytes < 1024.0:
+                return f"{size_bytes:.1f} {unit}"
+            size_bytes /= 1024.0
+        return f"{size_bytes:.1f} TB"
     
     def on_check_completed(self, success, message):
         """检查完成"""
@@ -393,43 +415,104 @@ class SimpleTestApp(QWidget):
         else:
             self.log_message(f"❌ 更新检查失败: {message}")
     
-    def start_update(self, update_info):
-        """开始更新过程"""
-        self.log_message("🚀 开始下载更新...")
-        self.update_manager.start_update(update_info)
+    def start_pyinstaller_update(self, update_info):
+        """启动PyInstaller模式的更新过程"""
+        try:
+            # 1. 确定更新器路径
+            if getattr(sys, 'frozen', False):
+                # 如果是打包后的exe运行
+                app_dir = Path(sys.executable).parent
+                updater_path = app_dir / "updater.exe"
+                current_exe = sys.executable
+            else:
+                # 如果是开发环境运行
+                app_dir = Path(__file__).parent
+                updater_path = app_dir / "updater.exe"
+                current_exe = "KuzflowApp.exe"  # 假设的exe名称
+            
+            # 2. 检查更新器是否存在
+            if not updater_path.exists():
+                QMessageBox.critical(
+                    self, 
+                    "更新器不存在", 
+                    f"找不到更新器程序：{updater_path}\n请重新下载完整的应用程序包。"
+                )
+                return
+            
+            # 3. 准备更新信息文件
+            temp_dir = app_dir / "temp"
+            temp_dir.mkdir(exist_ok=True)
+            update_info_file = temp_dir / "update_info.json"
+            
+            # 保存更新信息
+            with open(update_info_file, 'w', encoding='utf-8') as f:
+                json.dump(update_info, f, ensure_ascii=False, indent=2)
+            
+            self.log_message(f"📝 更新信息已保存到: {update_info_file}")
+            
+            # 4. 启动更新器
+            self.log_message("🚀 启动更新器程序...")
+            
+            updater_args = [
+                str(updater_path),
+                str(update_info_file),
+                Path(current_exe).name  # 只传递文件名
+            ]
+            
+            self.log_message(f"更新器命令: {' '.join(updater_args)}")
+            
+            # 启动更新器进程
+            subprocess.Popen(updater_args, cwd=str(app_dir))
+            
+            # 5. 显示提示并关闭主程序
+            QMessageBox.information(
+                self,
+                "启动更新器",
+                "更新器已启动，主程序即将关闭。\n请等待更新完成，程序将自动重启。"
+            )
+            
+            self.log_message("💤 主程序即将退出，等待更新器接管...")
+            
+            # 6. 关闭主程序
+            self.close_application()
+            
+        except Exception as e:
+            self.log_message(f"❌ 启动更新器失败: {e}")
+            QMessageBox.critical(
+                self,
+                "启动更新器失败",
+                f"无法启动更新程序：\n{str(e)}\n\n请尝试手动重新下载应用程序。"
+            )
     
-    def on_download_progress(self, percent, message):
-        """下载进度更新"""
-        self.update_status_label.setText(f"下载中... {percent}%")
-        self.log_message(f"📥 {message}")
+    def close_application(self):
+        """安全关闭应用程序"""
+        try:
+            # 关闭API客户端
+            if self.api_client:
+                self.api_client.close()
+            
+            # 停止更新检查线程
+            if self.update_check_thread and self.update_check_thread.isRunning():
+                self.update_check_thread.quit()
+                self.update_check_thread.wait(2000)  # 等待最多2秒
+            
+            # 退出应用
+            QApplication.quit()
+            
+        except Exception as e:
+            self.log_message(f"关闭应用时出错: {e}")
+            # 强制退出
+            sys.exit(0)
     
-    def on_update_completed(self, success, message):
-        """更新完成"""
-        if success:
-            self.log_message(f"🎉 更新完成: {message}")
-            QMessageBox.information(self, "更新完成", "应用将重启以完成更新")
-            self.restart_application()
-        else:
-            self.log_message(f"❌ 更新失败: {message}")
-            QMessageBox.warning(self, "更新失败", f"更新过程中出现错误:\n{message}")
-    
-    def on_update_failed(self, error_message):
-        """更新失败"""
-        self.log_message(f"💥 更新异常: {error_message}")
-        QMessageBox.critical(self, "更新异常", f"更新过程中发生异常:\n{error_message}")
-    
-    def restart_application(self):
-        """重启应用程序"""
-        self.log_message("🔄 准备重启应用...")
-        
-        # 关闭API客户端
-        if self.api_client:
-            self.api_client.close()
-        
-        # 重启应用
-        import subprocess
-        subprocess.Popen([sys.executable, __file__])
-        QApplication.quit()
+    def get_application_info(self):
+        """获取应用信息（用于调试）"""
+        info = {
+            "is_frozen": getattr(sys, 'frozen', False),
+            "executable": sys.executable if getattr(sys, 'frozen', False) else __file__,
+            "app_dir": Path(sys.executable).parent if getattr(sys, 'frozen', False) else Path(__file__).parent,
+            "current_version": self.current_version
+        }
+        return info
     
     def log_message(self, message):
         """记录日志消息"""

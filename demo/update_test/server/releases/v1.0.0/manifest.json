@@ -1,19 +1,43 @@
 {
   "version": "1.0.0",
-  "package": {
+  "package_type": "pyinstaller_exe",
+  "executable": {
+    "filename": "KuzflowApp_v1.0.0.exe",
+    "size": 591,
+    "hash": "sha256:calculated_by_server",
+    "download_url": "/api/version/download_exe/1.0.0"
+  },
+  "legacy_package": {
     "filename": "update_v1.0.0.zip",
     "size": 18704,
     "hash": "1382ab462be3c0c4f673d1eef8da342efa4cd4d44f7a4dbafaf5f32399312c44",
     "download_url": "/api/version/download/1.0.0"
   },
   "metadata": {
-    "release_date": "2024-09-03T10:00:00Z",
+    "release_date": "2024-09-01T10:00:00Z",
     "platform": "windows",
-    "arch": "x64"
+    "arch": "x64",
+    "python_version": "3.10.0",
+    "qt_version": "5.15.0",
+    "description": "初始版本 - 基本功能实现"
   },
-  "files": [
+  "features": [
+    "基本的PyQt5图形界面",
+    "简单的计数器功能（+1按钮）", 
+    "蓝色UI主题",
+    "版本显示",
+    "在线更新检查功能"
+  ],
+  "system_requirements": {
+    "os": "Windows 10 或更高版本",
+    "memory": "最少 512MB RAM",
+    "disk_space": "最少 10MB 可用空间",
+    "network": "需要网络连接以进行更新"
+  },
+  "changelog": "初始发布版本，实现了基本的应用功能和在线更新框架。",
+  "source_files": [
     "app.py",
-    "version.txt",
+    "version.txt", 
     "manipulate/__init__.py",
     "manipulate/api_client.py",
     "manipulate/update_manager.py",

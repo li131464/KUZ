@@ -1,7 +1,14 @@
 {
   "version": "1.1.0",
-  "package": {
-    "filename": "update_v1.1.0.zip",
+  "package_type": "pyinstaller_exe",
+  "executable": {
+    "filename": "KuzflowApp_v1.1.0.exe",
+    "size": 1112,
+    "hash": "sha256:calculated_by_server",
+    "download_url": "/api/version/download_exe/1.1.0"
+  },
+  "legacy_package": {
+    "filename": "update_v1.1.0.zip", 
     "size": 18697,
     "hash": "dc7c66a41308cb3e2a186ef9e7ade211f4bf3331fa4c6584e93cd30a5abf0cd9",
     "download_url": "/api/version/download/1.1.0"
@@ -9,12 +16,55 @@
   "metadata": {
     "release_date": "2024-09-03T10:00:00Z",
     "platform": "windows",
-    "arch": "x64"
+    "arch": "x64",
+    "python_version": "3.10.0",
+    "qt_version": "5.15.0", 
+    "description": "功能增强版本 - 新增多项实用功能",
+    "dependencies_changed": true
   },
-  "files": [
+  "features": [
+    "基本的PyQt5图形界面",
+    "增强的计数器功能（+1和-1按钮）",
+    "绿色UI主题（从蓝色升级）", 
+    "关于对话框",
+    "版本显示",
+    "在线更新检查功能",
+    "性能优化"
+  ],
+  "system_requirements": {
+    "os": "Windows 10 或更高版本",
+    "memory": "最少 512MB RAM",
+    "disk_space": "最少 12MB 可用空间", 
+    "network": "需要网络连接以进行更新"
+  },
+  "changes_from_previous": {
+    "1.0.0": {
+      "new_features": [
+        "新增计数器减法功能（-1按钮）",
+        "添加关于对话框显示版本信息"
+      ],
+      "improvements": [
+        "UI主题颜色从蓝色改为绿色",
+        "优化应用启动速度",
+        "改进错误处理机制",
+        "更好的响应式布局"
+      ],
+      "bug_fixes": [
+        "修复计数器显示问题", 
+        "修复更新检查偶尔失败的问题"
+      ],
+      "technical_updates": [
+        "更新依赖包版本",
+        "增强安全性",
+        "添加使用统计"
+      ]
+    }
+  },
+  "changelog": "功能增强版本，新增计数器-1功能、关于对话框，UI主题升级为绿色，并进行了多项性能优化和bug修复。",
+  "source_files": [
     "app.py",
     "version.txt",
-    "manipulate/__init__.py",
+    "manipulate/__init__.py", 
     "manipulate/api_client.py",
     "manipulate/update_manager.py",
     "manipulate/download_manager.py",
