@@ -370,17 +370,18 @@ class SimpleTestApp(QWidget):
     
     def on_update_found(self, update_info):
         """发现更新"""
-        self.log_message(f"✨ 发现新版本: {update_info['latest_version']}")
+        self.log_message(f"⚠️ 发现强制更新: {update_info['latest_version']}")
         
-        # 显示更新对话框
+        # 显示强制更新对话框
         from manipulate.update_dialog import UpdateDialog
         dialog = UpdateDialog(update_info, self)
         
+        # 强制更新模式：用户只能选择更新或退出应用
+        # 如果对话框返回Accepted，说明用户选择了更新
+        # 如果用户选择退出，对话框内部会直接调用sys.exit(0)
         if dialog.exec_() == QDialog.Accepted:
-            self.log_message("👍 用户确认更新，开始下载...")
+            self.log_message("👍 用户确认强制更新，开始下载...")
             self.start_update(update_info)
-        else:
-            self.log_message("❌ 用户取消更新")
     
     def on_check_completed(self, success, message):
         """检查完成"""

@@ -32,9 +32,9 @@ class UpdateDialog(QDialog):
     
     def setup_ui(self):
         """设置对话框UI"""
-        self.setWindowTitle("发现新版本")
+        self.setWindowTitle("强制更新")
         self.setFixedSize(500, 400)
-        self.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
+        self.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint)
         
         layout = QVBoxLayout()
         layout.setSpacing(15)
@@ -61,14 +61,15 @@ class UpdateDialog(QDialog):
         header_layout = QVBoxLayout(header_frame)
         
         # 主标题
-        title = QLabel(f"🎉 发现新版本 {self.update_info['latest_version']}")
+        title = QLabel(f"⚠️ 需要更新到版本 {self.update_info['latest_version']}")
         title.setFont(QFont("Arial", 16, QFont.Bold))
         title.setAlignment(Qt.AlignCenter)
+        title.setStyleSheet("color: #dc3545;")
         
         # 副标题
-        subtitle = QLabel("新版本已准备就绪，是否立即更新？")
+        subtitle = QLabel("必须更新到最新版本才能继续使用应用")
         subtitle.setAlignment(Qt.AlignCenter)
-        subtitle.setStyleSheet("color: #666; font-size: 12px;")
+        subtitle.setStyleSheet("color: #dc3545; font-size: 12px; font-weight: bold;")
         
         header_layout.addWidget(title)
         header_layout.addWidget(subtitle)
@@ -139,19 +140,12 @@ class UpdateDialog(QDialog):
         """创建按钮区域"""
         button_layout = QHBoxLayout()
         
-        # 稍后提醒按钮
+        # 退出应用按钮
         if FLUENT_AVAILABLE:
-            self.later_button = PushButton("稍后提醒")
+            self.exit_button = PushButton("退出应用")
         else:
-            self.later_button = QPushButton("稍后提醒")
-        self.later_button.clicked.connect(self.reject)
-        
-        # 跳过此版本按钮
-        if FLUENT_AVAILABLE:
-            self.skip_button = PushButton("跳过此版本")
-        else:
-            self.skip_button = QPushButton("跳过此版本")
-        self.skip_button.clicked.connect(self.skip_version)
+            self.exit_button = QPushButton("退出应用")
+        self.exit_button.clicked.connect(self.exit_application)
         
         # 立即更新按钮
         if FLUENT_AVAILABLE:
@@ -160,14 +154,8 @@ class UpdateDialog(QDialog):
             self.update_button = QPushButton("立即更新")
         self.update_button.clicked.connect(self.accept)
         
-        # 如果是强制更新，只显示更新按钮
-        if self.update_info.get('force_update', False):
-            self.later_button.setVisible(False)
-            self.skip_button.setVisible(False)
-        
         button_layout.addStretch()
-        button_layout.addWidget(self.later_button)
-        button_layout.addWidget(self.skip_button)
+        button_layout.addWidget(self.exit_button)
         button_layout.addWidget(self.update_button)
         
         layout.addLayout(button_layout)
@@ -210,20 +198,20 @@ class UpdateDialog(QDialog):
         except Exception as e:
             self.changelog_text.setPlainText(f"加载更新日志失败: {str(e)}")
     
-    def skip_version(self):
-        """跳过此版本"""
+    def exit_application(self):
+        """退出应用"""
         reply = QMessageBox.question(
             self,
-            "跳过版本",
-            f"确定要跳过版本 {self.update_info['latest_version']} 吗？\n\n"
-            "跳过后，此版本将不再提醒更新。",
+            "退出应用",
+            "您选择了退出应用。\n\n"
+            "不更新将无法使用最新功能，确定要退出吗？",
             QMessageBox.Yes | QMessageBox.No,
             QMessageBox.No
         )
         
         if reply == QMessageBox.Yes:
-            # 这里可以记录跳过的版本
-            self.done(2)  # 自定义返回码表示跳过
+            # 直接退出整个应用程序
+            sys.exit(0)
     
     def format_file_size(self, size_bytes):
         """格式化文件大小"""

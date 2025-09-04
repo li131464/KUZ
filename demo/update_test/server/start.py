@@ -47,7 +47,7 @@ def load_config():
             "versions": {
                 "latest": "1.1.0",
                 "supported": ["1.0.0", "1.1.0"],
-                "force_update_from": "0.9.0"
+                "force_update_from": "1.0.0"
             },
             "releases_path": "./releases"
         }
