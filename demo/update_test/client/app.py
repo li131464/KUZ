@@ -35,7 +35,7 @@ except ImportError:
 
 # 导入本地模块
 from manipulate.api_client import APIClient
-from manipulate.update_manager import UpdateManager
+# from manipulate.update_manager import UpdateManager  # PyInstaller模式暂时不用
 
 
 class UpdateCheckThread(QThread):
@@ -112,13 +112,11 @@ class SimpleTestApp(QWidget):
         self.api_client = APIClient(base_url, log_callback=self.log_message)
     
     def init_update_manager(self):
-        """初始化更新管理器"""
-        self.update_manager = UpdateManager(self.api_client, self.current_version, self.log_message)
-        
-        # 连接更新管理器信号
-        self.update_manager.download_progress.connect(self.on_download_progress)
-        self.update_manager.update_completed.connect(self.on_update_completed)
-        self.update_manager.update_failed.connect(self.on_update_failed)
+        """初始化更新管理器（PyInstaller模式简化版）"""
+        # PyInstaller模式下我们不使用复杂的UpdateManager
+        # 只保留简单的更新检查功能
+        self.update_manager = None  # 暂时设为None
+        pass
     
     def init_ui(self):
         """初始化用户界面"""
