@@ -396,12 +396,21 @@ def update_application():
         if not os.path.exists(target_exe_path):
             raise Exception("替换后的程序文件不存在")
         
-        # 9. 启动新程序
+        # 9. 更新版本文件（必须在启动新程序前更新）
+        try:
+            version_file_path = current_dir / "version.txt"
+            with open(version_file_path, 'w', encoding='utf-8') as f:
+                f.write(new_version)
+            log_message(f"✅ 版本文件已更新: {version_file_path} -> {new_version}")
+        except Exception as e:
+            log_message(f"⚠️ 更新版本文件失败: {e}")
+        
+        # 10. 启动新程序
         log_message("🚀 启动更新后的应用程序...")
         if not start_updated_application(str(target_exe_path)):
             log_message("⚠️ 自动启动失败，请手动启动应用程序")
         
-        # 10. 清理临时文件
+        # 11. 清理临时文件
         log_message("🧹 清理临时文件...")
         cleanup_temp_files(str(temp_dir))
         

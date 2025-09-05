@@ -1,4 +1,4 @@
-# PyInstaller在线更新完整指南 - 超级小白版
+# PyInstaller在线更新完整指南
 
 ## 🎯 问题背景
 

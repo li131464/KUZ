@@ -87,15 +87,28 @@ class SimpleTestApp(QWidget):
     
     def load_current_version(self):
         """加载当前版本号"""
-        version_file = Path(__file__).parent / "version.txt"
         try:
+            # PyInstaller环境下，版本文件应该与exe在同一目录
+            if getattr(sys, 'frozen', False):
+                # 打包环境：exe文件所在目录
+                exe_dir = Path(sys.executable).parent
+                version_file = exe_dir / "version.txt"
+            else:
+                # 开发环境：源码目录
+                version_file = Path(__file__).parent / "version.txt"
+            
             if version_file.exists():
                 with open(version_file, 'r', encoding='utf-8') as f:
-                    return f.read().strip()
+                    version = f.read().strip()
+                    print(f"读取版本文件: {version_file} -> {version}")
+                    return version
             else:
                 # 默认版本
+                print(f"版本文件不存在: {version_file}, 使用默认版本 1.0.0")
                 return "1.0.0"
-        except Exception:
+        except Exception as e:
+            # 异常时返回默认版本
+            print(f"读取版本文件异常: {e}, 使用默认版本 1.0.0")
             return "1.0.0"
     
     def init_api_client(self):
